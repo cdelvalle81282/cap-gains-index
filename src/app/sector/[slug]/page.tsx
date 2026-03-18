@@ -8,8 +8,7 @@ import type { StockTableRow } from '@/components/stock-table'
 import { NewsFeed } from '@/components/news-feed'
 import type { NewsArticle } from '@/components/news-item'
 
-export const revalidate = 300
-export const dynamicParams = true
+export const dynamic = 'force-dynamic'
 
 // Seeded random
 function seededRandom(seed: string): () => number {
@@ -74,15 +73,6 @@ function generateMockStockData(stocks: { ticker: string; name: string; manualRat
       signalLabel,
     }
   })
-}
-
-export async function generateStaticParams() {
-  try {
-    const sectors = await prisma.sector.findMany({ select: { slug: true } })
-    return sectors.map((s) => ({ slug: s.slug }))
-  } catch {
-    return []
-  }
 }
 
 export default async function SectorPage({ params }: { params: Promise<{ slug: string }> }) {

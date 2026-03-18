@@ -9,8 +9,7 @@ import { SignalBreakdown } from '@/components/signal-breakdown'
 import { NewsFeed } from '@/components/news-feed'
 import type { NewsArticle } from '@/components/news-item'
 
-export const revalidate = 300
-export const dynamicParams = true
+export const dynamic = 'force-dynamic'
 
 // Seeded random
 function seededRandom(seed: string): () => number {
@@ -102,15 +101,6 @@ function generateMockNews(ticker: string, stockName: string, sectorSlug: string,
       sectorColor,
     },
   ]
-}
-
-export async function generateStaticParams() {
-  try {
-    const stocks = await prisma.stock.findMany({ select: { ticker: true } })
-    return stocks.map((s) => ({ ticker: s.ticker }))
-  } catch {
-    return []
-  }
 }
 
 export default async function StockDetailPage({ params }: { params: Promise<{ ticker: string }> }) {
