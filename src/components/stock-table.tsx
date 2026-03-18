@@ -69,6 +69,7 @@ export function StockTable({ stocks, sectorSlug }: { stocks: StockTableRow[]; se
 
   return (
     <div style={{ borderRadius: '10px', border: '1px solid var(--dash-border)', overflow: 'hidden', backgroundColor: 'var(--bg-card)' }}>
+      <div className="stock-table-wrapper">
       <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr style={{ backgroundColor: 'var(--bg-secondary)' }}>
@@ -176,6 +177,7 @@ export function StockTable({ stocks, sectorSlug }: { stocks: StockTableRow[]; se
           })}
         </tbody>
       </table>
+      </div>
     </div>
   )
 }

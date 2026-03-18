@@ -63,13 +63,7 @@ export function StockStats({ stats }: StockStatsProps) {
       >
         KEY STATISTICS
       </div>
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '12px',
-        }}
-      >
+      <div className="stats-grid">
         {statItems.map((item) => (
           <div
             key={item.key}

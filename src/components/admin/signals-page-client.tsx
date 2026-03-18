@@ -13,13 +13,7 @@ export function SignalsPageClient({ initialConfig }: SignalsPageClientProps) {
   const [config, setConfig] = useState<BacktestConfig>(initialConfig)
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        gap: '24px',
-        alignItems: 'flex-start',
-      }}
-    >
+    <div className="signals-layout">
       {/* Left column: Signal Configuration */}
       <div style={{ flex: 1, minWidth: 0 }}>
         <h2

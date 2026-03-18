@@ -23,9 +23,10 @@ export default function AdminDashboardLayout({
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
+    <div className="admin-layout" style={{ display: 'flex', minHeight: '100vh' }}>
       {/* Sidebar */}
       <aside
+        className="admin-sidebar"
         style={{
           width: '220px',
           backgroundColor: 'var(--bg-secondary)',

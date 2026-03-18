@@ -143,13 +143,7 @@ export default async function Home() {
       </div>
 
       {/* Sector cards grid */}
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(3, 1fr)',
-          gap: '16px',
-        }}
-      >
+      <div className="sector-grid">
         {sectorCards.map((sector) => (
           <SectorCard key={sector.slug} sector={sector} />
         ))}
