@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/components/providers";
+import { Header } from "@/components/header";
 import "./globals.css";
 
 const inter = Inter({
@@ -27,8 +28,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${inter.variable} ${jetbrainsMono.variable} font-sans antialiased`}
+        style={{ backgroundColor: 'var(--bg-primary)', minHeight: '100vh' }}
       >
-        <Providers>{children}</Providers>
+        <Providers>
+          <Header />
+          <main style={{ padding: '24px 32px' }}>
+            {children}
+          </main>
+        </Providers>
       </body>
     </html>
   );
