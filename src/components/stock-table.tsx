@@ -13,6 +13,15 @@ export interface StockTableRow {
   marketCap: number
   weight: number
   rating: string
+  signalLabel?: string
+}
+
+const SIGNAL_DOT_COLORS: Record<string, string> = {
+  'Strong Buy': '#00d4aa',
+  'Buy': '#00d4aa',
+  'Hold': '#f59e0b',
+  'Sell': '#ff4d6a',
+  'Strong Sell': '#ff4d6a',
 }
 
 type SortKey = 'ticker' | 'name' | 'price' | 'changePercent' | 'marketCap' | 'weight'
@@ -82,6 +91,9 @@ export function StockTable({ stocks, sectorSlug }: { stocks: StockTableRow[]; se
               Weight {sortKey === 'weight' ? (sortDir === 'asc' ? '\u2191' : '\u2193') : ''}
             </th>
             <th style={{ ...headerStyle('ticker'), cursor: 'default', textAlign: 'center' }}>
+              Signal
+            </th>
+            <th style={{ ...headerStyle('ticker'), cursor: 'default', textAlign: 'center' }}>
               Rating
             </th>
           </tr>
@@ -118,6 +130,31 @@ export function StockTable({ stocks, sectorSlug }: { stocks: StockTableRow[]; se
                 </td>
                 <td style={{ padding: '12px', fontSize: '13px', fontFamily: 'var(--font-mono)', textAlign: 'right', color: 'var(--text-secondary)' }}>
                   {(stock.weight * 100).toFixed(2)}%
+                </td>
+                <td style={{ padding: '12px', textAlign: 'center' }}>
+                  {stock.signalLabel ? (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600, color: SIGNAL_DOT_COLORS[stock.signalLabel] || 'var(--text-muted)' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: SIGNAL_DOT_COLORS[stock.signalLabel] || '#8b8da3',
+                      }} />
+                      {stock.signalLabel}
+                    </span>
+                  ) : (
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '11px', color: 'var(--text-muted)' }}>
+                      <span style={{
+                        display: 'inline-block',
+                        width: '8px',
+                        height: '8px',
+                        borderRadius: '50%',
+                        backgroundColor: '#8b8da3',
+                      }} />
+                      &mdash;
+                    </span>
+                  )}
                 </td>
                 <td style={{ padding: '12px', textAlign: 'center' }}>
                   <span style={{

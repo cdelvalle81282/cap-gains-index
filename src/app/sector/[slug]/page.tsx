@@ -52,12 +52,14 @@ function generateMockHistoricalIndex(seed: string): { date: string; value: numbe
 
 function generateMockStockData(stocks: { ticker: string; name: string; manualRating: string }[], sectorSlug: string): StockTableRow[] {
   const rng = seededRandom(sectorSlug + '-stocks')
+  const signalLabels = ['Strong Buy', 'Buy', 'Hold', 'Sell', 'Strong Sell']
 
   return stocks.map((stock) => {
     const price = 20 + rng() * 480
     const changePercent = (rng() - 0.5) * 10
     const change = price * changePercent / 100
     const marketCap = (rng() * 500 + 1) * 1e9
+    const signalLabel = signalLabels[Math.floor(rng() * signalLabels.length)]
 
     return {
       ticker: stock.ticker,
@@ -68,6 +70,7 @@ function generateMockStockData(stocks: { ticker: string; name: string; manualRat
       marketCap,
       weight: 0, // will be calculated below
       rating: stock.manualRating,
+      signalLabel,
     }
   })
 }
