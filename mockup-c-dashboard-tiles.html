@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap Gains Index - Layout C: Dashboard Tiles</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #0a0b0f;
+    --bg-secondary: #12131a;
+    --bg-card: #161822;
+    --bg-card-hover: #1c1e2e;
+    --border: #1e2035;
+    --border-hover: #2a2d4a;
+    --text-primary: #e8e9f0;
+    --text-secondary: #8b8da3;
+    --text-muted: #5a5c72;
+    --green: #00d4aa;
+    --green-dim: rgba(0,212,170,0.12);
+    --red: #ff4d6a;
+    --red-dim: rgba(255,77,106,0.12);
+    --blue: #4d7cff;
+    --purple: #a855f7;
+    --amber: #f59e0b;
+    --cyan: #06b6d4;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--amber), var(--red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .portfolio-summary {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .portfolio-stat {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+
+  .portfolio-stat .label { color: var(--text-muted); }
+  .portfolio-stat .value { font-weight: 600; }
+  .portfolio-stat .value.up { color: var(--green); }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .header-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .header-btn:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  .main {
+    padding: 24px 32px;
+  }
+
+  /* Tile Grid */
+  .tile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .tile {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 0;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    overflow: hidden;
+  }
+
+  .tile:hover {
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.4);
+  }
+
+  /* Tile Header */
+  .tile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 22px 0;
+  }
+
+  .tile-sector-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .sector-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+
+  .tile-sector-name {
+    font-size: 15px;
+    font-weight: 700;
+  }
+
+  .tile-stock-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tile-change {
+    font-size: 22px;
+    font-weight: 800;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -0.5px;
+  }
+
+  .tile-change.up { color: var(--green); }
+  .tile-change.down { color: var(--red); }
+
+  /* Tile Chart */
+  .tile-chart {
+    height: 80px;
+    padding: 8px 22px;
+  }
+
+  .tile-chart svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Tile Movers */
+  .tile-movers {
+    display: flex;
+    gap: 16px;
+    padding: 0 22px;
+    font-size: 12px;
+  }
+
+  .mover {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .mover-label {
+    color: var(--text-muted);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+  }
+
+  .mover-ticker {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 12px;
+  }
+
+  .mover-change {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    font-size: 11px;
+  }
+
+  .mover-change.up { color: var(--green); }
+  .mover-change.down { color: var(--red); }
+
+  /* Tile News */
+  .tile-news {
+    padding: 12px 22px;
+    border-top: 1px solid var(--border);
+    margin-top: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .tile-news-icon {
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .tile-news-text {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+
+  .tile-news-time {
+    font-size: 10px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    flex-shrink: 0;
+  }
+
+  /* Tile Ratings Footer */
+  .tile-ratings {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 22px;
+    background: rgba(0,0,0,0.2);
+  }
+
+  .rating-pills {
+    display: flex;
+    gap: 4px;
+  }
+
+  .rating-pill {
+    font-size: 9px;
+    font-weight: 700;
+    padding: 3px 7px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.3px;
+  }
+
+  .rating-pill.buy { background: var(--green-dim); color: var(--green); }
+  .rating-pill.hold { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .rating-pill.sell { background: var(--red-dim); color: var(--red); }
+  .rating-pill.short { background: rgba(168,85,247,0.12); color: var(--purple); }
+
+  .tile-signal {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .signal-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  .signal-dot.bullish { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .signal-dot.bearish { background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .signal-dot.neutral { background: var(--amber); }
+
+  .layout-label {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--amber);
+    color: #0a0b0f;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(245,158,11,0.4);
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-area">
+    <div class="logo">CAP GAINS INDEX</div>
+    <div class="portfolio-summary">
+      <div class="portfolio-stat">
+        <span class="label">Today</span>
+        <span class="value up">+1.84%</span>
+      </div>
+      <div class="portfolio-stat">
+        <span class="label">YTD</span>
+        <span class="value up">+12.6%</span>
+      </div>
+      <div class="portfolio-stat">
+        <span class="label">Stocks</span>
+        <span class="value">71</span>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="header-date">Mar 17, 2026</span>
+    <button class="header-btn">&#9790; Dark</button>
+    <button class="header-btn">&#9881; Admin</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="tile-grid">
+
+    <!-- Defense Tile -->
+    <div class="tile">
+      <div class="tile-header">
+        <div class="tile-sector-info">
+          <div class="sector-icon" style="background: rgba(77,124,255,0.15);">
+            <span style="color: var(--blue);">&#9670;</span>
+          </div>
+          <div>
+            <div class="tile-sector-name">Defense, Drones & AI</div>
+            <div class="tile-stock-count">9 stocks</div>
+          </div>
+        </div>
+        <div class="tile-change up">+2.31%</div>
+      </div>
+      <div class="tile-chart">
+        <svg viewBox="0 0 400 70" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="dg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4d7cff" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#4d7cff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,50 L30,48 L60,42 L90,45 L120,38 L150,35 L180,40 L210,30 L240,28 L270,32 L300,22 L330,18 L360,20 L390,12 L400,8" fill="none" stroke="#4d7cff" stroke-width="2"/>
+          <path d="M0,50 L30,48 L60,42 L90,45 L120,38 L150,35 L180,40 L210,30 L240,28 L270,32 L300,22 L330,18 L360,20 L390,12 L400,8 L400,70 L0,70Z" fill="url(#dg)"/>
+        </svg>
+      </div>
+      <div class="tile-movers">
+        <div class="mover">
+          <span class="mover-label">Top</span>
+          <span class="mover-ticker">RTX</span>
+          <span class="mover-change up">+3.1%</span>
+        </div>
+        <div class="mover">
+          <span class="mover-label">Bot</span>
+          <span class="mover-ticker">RCAT</span>
+          <span class="mover-change down">-1.8%</span>
+        </div>
+      </div>
+      <div class="tile-news">
+        <span class="tile-news-icon">&#128240;</span>
+        <span class="tile-news-text">RTX wins $2.1B U.S. Army missile defense contract, shares surge</span>
+        <span class="tile-news-time">2h</span>
+      </div>
+      <div class="tile-ratings">
+        <div class="rating-pills">
+          <span class="rating-pill buy">6 BUY</span>
+          <span class="rating-pill hold">2 HOLD</span>
+          <span class="rating-pill sell">1 SELL</span>
+        </div>
+        <div class="tile-signal">
+          <div class="signal-dot bullish"></div>
+          Signal: Bullish
+        </div>
+      </div>
+    </div>
+
+    <!-- Energy Tile -->
+    <div class="tile">
+      <div class="tile-header">
+        <div class="tile-sector-info">
+          <div class="sector-icon" style="background: rgba(245,158,11,0.15);">
+            <span style="color: var(--amber);">&#9889;</span>
+          </div>
+          <div>
+            <div class="tile-sector-name">Energy</div>
+            <div class="tile-stock-count">30 stocks</div>
+          </div>
+        </div>
+        <div class="tile-change down">-0.82%</div>
+      </div>
+      <div class="tile-chart">
+        <svg viewBox="0 0 400 70" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff4d6a" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#ff4d6a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,20 L30,24 L60,18 L90,28 L120,32 L150,26 L180,35 L210,40 L240,34 L270,42 L300,45 L330,40 L360,48 L390,52 L400,50" fill="none" stroke="#ff4d6a" stroke-width="2"/>
+          <path d="M0,20 L30,24 L60,18 L90,28 L120,32 L150,26 L180,35 L210,40 L240,34 L270,42 L300,45 L330,40 L360,48 L390,52 L400,50 L400,70 L0,70Z" fill="url(#eg)"/>
+        </svg>
+      </div>
+      <div class="tile-movers">
+        <div class="mover">
+          <span class="mover-label">Top</span>
+          <span class="mover-ticker">CEG</span>
+          <span class="mover-change up">+2.4%</span>
+        </div>
+        <div class="mover">
+          <span class="mover-label">Bot</span>
+          <span class="mover-ticker">NFE</span>
+          <span class="mover-change down">-4.1%</span>
+        </div>
+      </div>
+      <div class="tile-news">
+        <span class="tile-news-icon">&#128240;</span>
+        <span class="tile-news-text">ExxonMobil announces $10B Gulf Coast LNG export facility expansion</span>
+        <span class="tile-news-time">5h</span>
+      </div>
+      <div class="tile-ratings">
+        <div class="rating-pills">
+          <span class="rating-pill buy">8 BUY</span>
+          <span class="rating-pill hold">14 HOLD</span>
+          <span class="rating-pill sell">6 SELL</span>
+          <span class="rating-pill short">2 SHRT</span>
+        </div>
+        <div class="tile-signal">
+          <div class="signal-dot bearish"></div>
+          Signal: Bearish
+        </div>
+      </div>
+    </div>
+
+    <!-- Commodities Tile -->
+    <div class="tile">
+      <div class="tile-header">
+        <div class="tile-sector-info">
+          <div class="sector-icon" style="background: rgba(0,212,170,0.15);">
+            <span style="color: var(--green);">&#9830;</span>
+          </div>
+          <div>
+            <div class="tile-sector-name">Commodities</div>
+            <div class="tile-stock-count">9 stocks</div>
+          </div>
+        </div>
+        <div class="tile-change up">+0.45%</div>
+      </div>
+      <div class="tile-chart">
+        <svg viewBox="0 0 400 70" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="cg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00d4aa" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#00d4aa" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,40 L40,38 L80,42 L120,35 L160,37 L200,32 L240,38 L280,34 L320,30 L360,32 L400,28" fill="none" stroke="#00d4aa" stroke-width="2"/>
+          <path d="M0,40 L40,38 L80,42 L120,35 L160,37 L200,32 L240,38 L280,34 L320,30 L360,32 L400,28 L400,70 L0,70Z" fill="url(#cg)"/>
+        </svg>
+      </div>
+      <div class="tile-movers">
+        <div class="mover">
+          <span class="mover-label">Top</span>
+          <span class="mover-ticker">GLD</span>
+          <span class="mover-change up">+1.2%</span>
+        </div>
+        <div class="mover">
+          <span class="mover-label">Bot</span>
+          <span class="mover-ticker">PLL</span>
+          <span class="mover-change down">-3.4%</span>
+        </div>
+      </div>
+      <div class="tile-news">
+        <span class="tile-news-icon">&#128240;</span>
+        <span class="tile-news-text">Gold hits all-time high above $3,200 as central banks accumulate reserves</span>
+        <span class="tile-news-time">6h</span>
+      </div>
+      <div class="tile-ratings">
+        <div class="rating-pills">
+          <span class="rating-pill buy">3 BUY</span>
+          <span class="rating-pill hold">4 HOLD</span>
+          <span class="rating-pill sell">2 SELL</span>
+        </div>
+        <div class="tile-signal">
+          <div class="signal-dot neutral"></div>
+          Signal: Neutral
+        </div>
+      </div>
+    </div>
+
+    <!-- Crypto Tile -->
+    <div class="tile">
+      <div class="tile-header">
+        <div class="tile-sector-info">
+          <div class="sector-icon" style="background: rgba(168,85,247,0.15);">
+            <span style="color: var(--purple);">&#9830;</span>
+          </div>
+          <div>
+            <div class="tile-sector-name">Crypto & Finance</div>
+            <div class="tile-stock-count">6 stocks</div>
+          </div>
+        </div>
+        <div class="tile-change up">+4.12%</div>
+      </div>
+      <div class="tile-chart">
+        <svg viewBox="0 0 400 70" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="crg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#a855f7" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#a855f7" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,58 L30,50 L60,52 L90,42 L120,35 L150,40 L180,28 L210,32 L240,20 L270,22 L300,15 L330,18 L360,10 L390,8 L400,5" fill="none" stroke="#a855f7" stroke-width="2"/>
+          <path d="M0,58 L30,50 L60,52 L90,42 L120,35 L150,40 L180,28 L210,32 L240,20 L270,22 L300,15 L330,18 L360,10 L390,8 L400,5 L400,70 L0,70Z" fill="url(#crg)"/>
+        </svg>
+      </div>
+      <div class="tile-movers">
+        <div class="mover">
+          <span class="mover-label">Top</span>
+          <span class="mover-ticker">MSTR</span>
+          <span class="mover-change up">+8.3%</span>
+        </div>
+        <div class="mover">
+          <span class="mover-label">Bot</span>
+          <span class="mover-ticker">SQ</span>
+          <span class="mover-change down">-0.9%</span>
+        </div>
+      </div>
+      <div class="tile-news">
+        <span class="tile-news-icon">&#128240;</span>
+        <span class="tile-news-text">Bitcoin surges past $95K on renewed institutional ETF inflows</span>
+        <span class="tile-news-time">3h</span>
+      </div>
+      <div class="tile-ratings">
+        <div class="rating-pills">
+          <span class="rating-pill buy">3 BUY</span>
+          <span class="rating-pill hold">2 HOLD</span>
+          <span class="rating-pill short">1 SHRT</span>
+        </div>
+        <div class="tile-signal">
+          <div class="signal-dot bullish"></div>
+          Signal: Bullish
+        </div>
+      </div>
+    </div>
+
+    <!-- AI/Semi Tile -->
+    <div class="tile">
+      <div class="tile-header">
+        <div class="tile-sector-info">
+          <div class="sector-icon" style="background: rgba(6,182,212,0.15);">
+            <span style="color: var(--cyan);">&#9670;</span>
+          </div>
+          <div>
+            <div class="tile-sector-name">AI Tech / Networking / Semis</div>
+            <div class="tile-stock-count">14 stocks</div>
+          </div>
+        </div>
+        <div class="tile-change up">+1.67%</div>
+      </div>
+      <div class="tile-chart">
+        <svg viewBox="0 0 400 70" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="ag" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#06b6d4" stop-opacity="0.25"/>
+              <stop offset="100%" stop-color="#06b6d4" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,45 L30,42 L60,40 L90,44 L120,36 L150,30 L180,33 L210,26 L240,24 L270,28 L300,20 L330,16 L360,18 L390,12 L400,10" fill="none" stroke="#06b6d4" stroke-width="2"/>
+          <path d="M0,45 L30,42 L60,40 L90,44 L120,36 L150,30 L180,33 L210,26 L240,24 L270,28 L300,20 L330,16 L360,18 L390,12 L400,10 L400,70 L0,70Z" fill="url(#ag)"/>
+        </svg>
+      </div>
+      <div class="tile-movers">
+        <div class="mover">
+          <span class="mover-label">Top</span>
+          <span class="mover-ticker">NVDA</span>
+          <span class="mover-change up">+3.8%</span>
+        </div>
+        <div class="mover">
+          <span class="mover-label">Bot</span>
+          <span class="mover-ticker">MCHP</span>
+          <span class="mover-change down">-1.2%</span>
+        </div>
+      </div>
+      <div class="tile-news">
+        <span class="tile-news-icon">&#128240;</span>
+        <span class="tile-news-text">NVIDIA Q4 earnings beat expectations by 12%, data center revenue up 40% YoY</span>
+        <span class="tile-news-time">4h</span>
+      </div>
+      <div class="tile-ratings">
+        <div class="rating-pills">
+          <span class="rating-pill buy">7 BUY</span>
+          <span class="rating-pill hold">5 HOLD</span>
+          <span class="rating-pill sell">2 SELL</span>
+        </div>
+        <div class="tile-signal">
+          <div class="signal-dot bullish"></div>
+          Signal: Bullish
+        </div>
+      </div>
+    </div>
+
+    <!-- Broad ETFs Tile -->
+    <div class="tile">
+      <div class="tile-header">
+        <div class="tile-sector-info">
+          <div class="sector-icon" style="background: rgba(139,141,163,0.15);">
+            <span style="color: var(--text-secondary);">&#9670;</span>
+          </div>
+          <div>
+            <div class="tile-sector-name">Broad Market ETFs</div>
+            <div class="tile-stock-count">3 ETFs</div>
+          </div>
+        </div>
+        <div class="tile-change down">-0.23%</div>
+      </div>
+      <div class="tile-chart">
+        <svg viewBox="0 0 400 70" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#8b8da3" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#8b8da3" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,30 L40,32 L80,28 L120,34 L160,32 L200,36 L240,34 L280,38 L320,35 L360,40 L400,38" fill="none" stroke="#8b8da3" stroke-width="2"/>
+          <path d="M0,30 L40,32 L80,28 L120,34 L160,32 L200,36 L240,34 L280,38 L320,35 L360,40 L400,38 L400,70 L0,70Z" fill="url(#bg)"/>
+        </svg>
+      </div>
+      <div class="tile-movers">
+        <div class="mover">
+          <span class="mover-label">Top</span>
+          <span class="mover-ticker">MAGA</span>
+          <span class="mover-change up">+0.3%</span>
+        </div>
+        <div class="mover">
+          <span class="mover-label">Bot</span>
+          <span class="mover-ticker">DEMZ</span>
+          <span class="mover-change down">-0.5%</span>
+        </div>
+      </div>
+      <div class="tile-news">
+        <span class="tile-news-icon">&#128240;</span>
+        <span class="tile-news-text">Broad market ETFs see mixed flows amid sector rotation toward defense and tech</span>
+        <span class="tile-news-time">8h</span>
+      </div>
+      <div class="tile-ratings">
+        <div class="rating-pills">
+          <span class="rating-pill buy">1 BUY</span>
+          <span class="rating-pill hold">2 HOLD</span>
+        </div>
+        <div class="tile-signal">
+          <div class="signal-dot neutral"></div>
+          Signal: Neutral
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<div class="layout-label">Layout C: Dashboard Tiles</div>
+
+</body>
+</html>

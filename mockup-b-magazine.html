@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap Gains Index - Layout B: Magazine Style</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #0a0b0f;
+    --bg-secondary: #12131a;
+    --bg-card: #161822;
+    --bg-card-hover: #1c1e2e;
+    --border: #1e2035;
+    --border-hover: #2a2d4a;
+    --text-primary: #e8e9f0;
+    --text-secondary: #8b8da3;
+    --text-muted: #5a5c72;
+    --green: #00d4aa;
+    --green-dim: rgba(0,212,170,0.12);
+    --red: #ff4d6a;
+    --red-dim: rgba(255,77,106,0.12);
+    --blue: #4d7cff;
+    --purple: #a855f7;
+    --amber: #f59e0b;
+    --cyan: #06b6d4;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--blue), var(--purple));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .header-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .header-btn:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+  }
+
+  .main {
+    padding: 28px 32px;
+  }
+
+  /* Hero Chart */
+  .hero-chart {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 28px;
+    position: relative;
+  }
+
+  .hero-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .hero-subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .chart-area {
+    height: 240px;
+    position: relative;
+    margin-bottom: 16px;
+  }
+
+  .chart-area svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  .time-selector {
+    display: flex;
+    gap: 4px;
+  }
+
+  .time-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    transition: all 0.2s;
+  }
+
+  .time-btn:hover { color: var(--text-primary); }
+  .time-btn.active {
+    background: var(--blue);
+    color: white;
+  }
+
+  /* Legend */
+  .chart-legend {
+    position: absolute;
+    top: 28px;
+    right: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Content Grid */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+  }
+
+  /* Sector List */
+  .sector-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .sector-row {
+    display: grid;
+    grid-template-columns: 200px 100px 1fr 80px;
+    align-items: center;
+    padding: 18px 22px;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: background 0.2s;
+    gap: 16px;
+  }
+
+  .sector-row:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .sector-row-name {
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .sector-row-change {
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .sector-row-change.up { color: var(--green); }
+  .sector-row-change.down { color: var(--red); }
+
+  .sector-bar-container {
+    height: 6px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .sector-bar {
+    height: 100%;
+    border-radius: 3px;
+    transition: width 0.5s ease;
+  }
+
+  .sector-bar.up { background: linear-gradient(90deg, var(--green), rgba(0,212,170,0.3)); }
+  .sector-bar.down { background: linear-gradient(90deg, var(--red), rgba(255,77,106,0.3)); }
+
+  .sector-arrow {
+    text-align: right;
+    color: var(--text-muted);
+    font-size: 18px;
+  }
+
+  /* News Sidebar */
+  .news-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    background: var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .news-sidebar-header {
+    padding: 16px 20px;
+    background: var(--bg-card);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .news-card {
+    padding: 16px 20px;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .news-card:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .news-card-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+
+  .news-card-headline {
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    margin-bottom: 6px;
+  }
+
+  .news-card-excerpt {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .news-card-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tag-defense { background: rgba(77,124,255,0.12); color: var(--blue); }
+  .tag-energy { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .tag-crypto { background: rgba(168,85,247,0.12); color: var(--purple); }
+  .tag-ai { background: rgba(6,182,212,0.12); color: var(--cyan); }
+  .tag-commodities { background: rgba(0,212,170,0.12); color: var(--green); }
+
+  .layout-label {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--purple);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(168,85,247,0.4);
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo">CAP GAINS INDEX</div>
+  <div class="header-right">
+    <span class="header-date">Mar 17, 2026</span>
+    <button class="header-btn">&#9790; Dark</button>
+    <button class="header-btn">&#9881; Admin</button>
+  </div>
+</header>
+
+<main class="main">
+  <!-- Hero Chart -->
+  <div class="hero-chart">
+    <div class="hero-title">All Sectors Performance</div>
+    <div class="hero-subtitle">Market-cap weighted index comparison</div>
+
+    <div class="chart-legend">
+      <div class="legend-item"><div class="legend-dot" style="background: var(--blue)"></div>Defense</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--amber)"></div>Energy</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--green)"></div>Commodities</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--purple)"></div>Crypto/Fin</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--cyan)"></div>AI/Net/Semi</div>
+      <div class="legend-item"><div class="legend-dot" style="background: var(--text-muted)"></div>Broad ETFs</div>
+    </div>
+
+    <div class="chart-area">
+      <svg viewBox="0 0 800 220" preserveAspectRatio="none">
+        <!-- Grid lines -->
+        <line x1="0" y1="55" x2="800" y2="55" stroke="#1e2035" stroke-width="0.5"/>
+        <line x1="0" y1="110" x2="800" y2="110" stroke="#1e2035" stroke-width="0.5"/>
+        <line x1="0" y1="165" x2="800" y2="165" stroke="#1e2035" stroke-width="0.5"/>
+
+        <!-- Defense (blue) - strong uptrend -->
+        <path d="M0,160 C50,155 100,150 150,142 C200,135 250,128 300,120 C350,112 400,105 450,95 C500,88 550,82 600,70 C650,62 700,55 750,45 L800,40" fill="none" stroke="#4d7cff" stroke-width="2.5" opacity="0.9"/>
+
+        <!-- Energy (amber) - slight downtrend -->
+        <path d="M0,100 C50,105 100,98 150,108 C200,112 250,115 300,118 C350,122 400,118 450,125 C500,128 550,132 600,130 C650,135 700,138 750,140 L800,142" fill="none" stroke="#f59e0b" stroke-width="2.5" opacity="0.9"/>
+
+        <!-- Commodities (green) - sideways with slight up -->
+        <path d="M0,130 C50,128 100,132 150,126 C200,130 250,124 300,128 C350,122 400,126 450,120 C500,118 550,122 600,116 C650,118 700,114 750,112 L800,110" fill="none" stroke="#00d4aa" stroke-width="2.5" opacity="0.9"/>
+
+        <!-- Crypto (purple) - volatile uptrend -->
+        <path d="M0,180 C50,170 100,175 150,160 C200,150 250,158 300,140 C350,130 400,138 450,120 C500,105 550,115 600,90 C650,80 700,85 750,65 L800,55" fill="none" stroke="#a855f7" stroke-width="2.5" opacity="0.9"/>
+
+        <!-- AI/Semi (cyan) - steady uptrend -->
+        <path d="M0,145 C50,140 100,138 150,132 C200,128 250,125 300,118 C350,115 400,110 450,105 C500,100 550,95 600,88 C650,82 700,78 750,72 L800,68" fill="none" stroke="#06b6d4" stroke-width="2.5" opacity="0.9"/>
+
+        <!-- Broad ETFs (gray) - flat -->
+        <path d="M0,115 C50,114 100,116 150,114 C200,115 250,116 300,115 C350,116 400,117 450,116 C500,118 550,117 600,119 C650,118 700,120 750,119 L800,120" fill="none" stroke="#5a5c72" stroke-width="2" opacity="0.6"/>
+      </svg>
+    </div>
+
+    <div class="time-selector">
+      <button class="time-btn">1M</button>
+      <button class="time-btn">3M</button>
+      <button class="time-btn active">6M</button>
+      <button class="time-btn">1Y</button>
+      <button class="time-btn">2Y</button>
+    </div>
+  </div>
+
+  <!-- Content Grid -->
+  <div class="content-grid">
+    <!-- Sector List -->
+    <div class="sector-list">
+      <div class="sector-row">
+        <span class="sector-row-name">Defense, Drones & AI</span>
+        <span class="sector-row-change up">+2.31%</span>
+        <div class="sector-bar-container">
+          <div class="sector-bar up" style="width: 75%"></div>
+        </div>
+        <span class="sector-arrow">&rarr;</span>
+      </div>
+      <div class="sector-row">
+        <span class="sector-row-name">Energy</span>
+        <span class="sector-row-change down">-0.82%</span>
+        <div class="sector-bar-container">
+          <div class="sector-bar down" style="width: 30%"></div>
+        </div>
+        <span class="sector-arrow">&rarr;</span>
+      </div>
+      <div class="sector-row">
+        <span class="sector-row-name">Commodities</span>
+        <span class="sector-row-change up">+0.45%</span>
+        <div class="sector-bar-container">
+          <div class="sector-bar up" style="width: 20%"></div>
+        </div>
+        <span class="sector-arrow">&rarr;</span>
+      </div>
+      <div class="sector-row">
+        <span class="sector-row-name">Crypto & Finance</span>
+        <span class="sector-row-change up">+4.12%</span>
+        <div class="sector-bar-container">
+          <div class="sector-bar up" style="width: 95%"></div>
+        </div>
+        <span class="sector-arrow">&rarr;</span>
+      </div>
+      <div class="sector-row">
+        <span class="sector-row-name">AI Tech / Net / Semis</span>
+        <span class="sector-row-change up">+1.67%</span>
+        <div class="sector-bar-container">
+          <div class="sector-bar up" style="width: 55%"></div>
+        </div>
+        <span class="sector-arrow">&rarr;</span>
+      </div>
+      <div class="sector-row">
+        <span class="sector-row-name">Broad Market ETFs</span>
+        <span class="sector-row-change down">-0.23%</span>
+        <div class="sector-bar-container">
+          <div class="sector-bar down" style="width: 10%"></div>
+        </div>
+        <span class="sector-arrow">&rarr;</span>
+      </div>
+    </div>
+
+    <!-- News Sidebar -->
+    <div class="news-sidebar">
+      <div class="news-sidebar-header">Trending News</div>
+
+      <div class="news-card">
+        <span class="news-card-tag tag-defense">Defense</span>
+        <div class="news-card-headline">RTX wins $2.1B missile defense contract</div>
+        <div class="news-card-excerpt">Raytheon Technologies awarded major U.S. Army contract for next-generation integrated air and missile defense systems.</div>
+        <div class="news-card-time">2h ago &middot; Reuters</div>
+      </div>
+
+      <div class="news-card">
+        <span class="news-card-tag tag-crypto">Crypto</span>
+        <div class="news-card-headline">Bitcoin surges past $95K on institutional inflows</div>
+        <div class="news-card-excerpt">Spot Bitcoin ETFs see record daily inflows of $1.2B as institutional adoption accelerates.</div>
+        <div class="news-card-time">3h ago &middot; Bloomberg</div>
+      </div>
+
+      <div class="news-card">
+        <span class="news-card-tag tag-ai">AI/Semi</span>
+        <div class="news-card-headline">NVIDIA Q4 earnings crush expectations</div>
+        <div class="news-card-excerpt">Data center revenue jumps 40% YoY, driven by unprecedented AI infrastructure demand.</div>
+        <div class="news-card-time">4h ago &middot; CNBC</div>
+      </div>
+
+      <div class="news-card">
+        <span class="news-card-tag tag-energy">Energy</span>
+        <div class="news-card-headline">ExxonMobil expands Gulf Coast LNG</div>
+        <div class="news-card-excerpt">$10B expansion of export facility to meet growing European and Asian demand for natural gas.</div>
+        <div class="news-card-time">5h ago &middot; WSJ</div>
+      </div>
+
+      <div class="news-card">
+        <span class="news-card-tag tag-commodities">Commodities</span>
+        <div class="news-card-headline">Gold hits all-time high above $3,200</div>
+        <div class="news-card-excerpt">Central bank accumulation and geopolitical uncertainty drive safe-haven demand to record levels.</div>
+        <div class="news-card-time">6h ago &middot; FT</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="layout-label">Layout B: Magazine Style</div>
+
+</body>
+</html>

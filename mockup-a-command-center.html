@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cap Gains Index - Layout A: Command Center</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg-primary: #0a0b0f;
+    --bg-secondary: #12131a;
+    --bg-card: #161822;
+    --bg-card-hover: #1c1e2e;
+    --border: #1e2035;
+    --border-hover: #2a2d4a;
+    --text-primary: #e8e9f0;
+    --text-secondary: #8b8da3;
+    --text-muted: #5a5c72;
+    --green: #00d4aa;
+    --green-dim: rgba(0,212,170,0.12);
+    --red: #ff4d6a;
+    --red-dim: rgba(255,77,106,0.12);
+    --blue: #4d7cff;
+    --purple: #a855f7;
+    --amber: #f59e0b;
+    --cyan: #06b6d4;
+  }
+
+  body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+  }
+
+  .logo-area {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .logo {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    background: linear-gradient(135deg, var(--green), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .portfolio-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--green-dim);
+    border: 1px solid rgba(0,212,170,0.2);
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--green);
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .header-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .header-btn {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .header-btn:hover {
+    border-color: var(--border-hover);
+    color: var(--text-primary);
+    background: var(--bg-card-hover);
+  }
+
+  /* Main Grid */
+  .main {
+    padding: 24px 32px;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+
+  .sector-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .sector-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .sector-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+  }
+
+  .sector-card.up::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .sector-card.down::before { background: linear-gradient(90deg, var(--red), transparent); }
+
+  .sector-card:hover {
+    border-color: var(--border-hover);
+    background: var(--bg-card-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 4px;
+  }
+
+  .sector-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+  }
+
+  .sector-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .sector-change {
+    font-size: 28px;
+    font-weight: 700;
+    margin: 8px 0;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: -1px;
+  }
+
+  .sector-change.up { color: var(--green); }
+  .sector-change.down { color: var(--red); }
+
+  /* Sparkline */
+  .sparkline-container {
+    height: 50px;
+    margin: 12px 0;
+    position: relative;
+  }
+
+  .sparkline {
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Rating pills */
+  .rating-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 12px;
+  }
+
+  .rating-pill {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+  }
+
+  .rating-pill.buy { background: var(--green-dim); color: var(--green); }
+  .rating-pill.hold { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .rating-pill.sell { background: var(--red-dim); color: var(--red); }
+  .rating-pill.short { background: rgba(168,85,247,0.12); color: var(--purple); }
+
+  /* News Section */
+  .news-section {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+
+  .news-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .news-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 18px;
+    background: var(--bg-card);
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+
+  .news-item:hover {
+    background: var(--bg-card-hover);
+  }
+
+  .news-content {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    flex: 1;
+  }
+
+  .news-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .news-headline {
+    font-size: 13px;
+    color: var(--text-primary);
+    font-weight: 500;
+  }
+
+  .news-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+
+  .news-sector-tag {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .news-time {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .tag-defense { background: rgba(77,124,255,0.12); color: var(--blue); }
+  .tag-energy { background: rgba(245,158,11,0.12); color: var(--amber); }
+  .tag-crypto { background: rgba(168,85,247,0.12); color: var(--purple); }
+  .tag-ai { background: rgba(6,182,212,0.12); color: var(--cyan); }
+  .tag-commodities { background: rgba(0,212,170,0.12); color: var(--green); }
+  .tag-etf { background: rgba(139,141,163,0.12); color: var(--text-secondary); }
+
+  .layout-label {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: var(--blue);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 100;
+    box-shadow: 0 4px 20px rgba(77,124,255,0.4);
+  }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="logo-area">
+    <div class="logo">CAP GAINS INDEX</div>
+    <div class="portfolio-badge">
+      <span>&#9650;</span> +1.84% today
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="header-date">Mar 17, 2026</span>
+    <button class="header-btn">&#9790; Dark</button>
+    <button class="header-btn">&#9881; Admin</button>
+  </div>
+</header>
+
+<main class="main">
+  <div class="section-label">Sector Performance</div>
+
+  <div class="sector-grid">
+    <!-- Defense -->
+    <div class="sector-card up">
+      <div class="card-header">
+        <span class="sector-name">Defense, Drones & AI</span>
+        <span class="sector-count">9 stocks</span>
+      </div>
+      <div class="sector-change up">+2.31%</div>
+      <div class="sparkline-container">
+        <svg class="sparkline" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00d4aa" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#00d4aa" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,35 L15,32 L30,28 L45,30 L60,25 L75,22 L90,26 L105,20 L120,18 L135,22 L150,15 L165,12 L180,14 L195,8 L200,5" fill="none" stroke="#00d4aa" stroke-width="2"/>
+          <path d="M0,35 L15,32 L30,28 L45,30 L60,25 L75,22 L90,26 L105,20 L120,18 L135,22 L150,15 L165,12 L180,14 L195,8 L200,5 L200,50 L0,50Z" fill="url(#g1)"/>
+        </svg>
+      </div>
+      <div class="rating-row">
+        <span class="rating-pill buy">6 BUY</span>
+        <span class="rating-pill hold">2 HOLD</span>
+        <span class="rating-pill sell">1 SELL</span>
+      </div>
+    </div>
+
+    <!-- Energy -->
+    <div class="sector-card down">
+      <div class="card-header">
+        <span class="sector-name">Energy</span>
+        <span class="sector-count">30 stocks</span>
+      </div>
+      <div class="sector-change down">-0.82%</div>
+      <div class="sparkline-container">
+        <svg class="sparkline" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff4d6a" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#ff4d6a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,15 L15,18 L30,12 L45,20 L60,22 L75,18 L90,25 L105,28 L120,24 L135,30 L150,32 L165,28 L180,35 L195,38 L200,36" fill="none" stroke="#ff4d6a" stroke-width="2"/>
+          <path d="M0,15 L15,18 L30,12 L45,20 L60,22 L75,18 L90,25 L105,28 L120,24 L135,30 L150,32 L165,28 L180,35 L195,38 L200,36 L200,50 L0,50Z" fill="url(#g2)"/>
+        </svg>
+      </div>
+      <div class="rating-row">
+        <span class="rating-pill buy">8 BUY</span>
+        <span class="rating-pill hold">14 HOLD</span>
+        <span class="rating-pill sell">6 SELL</span>
+        <span class="rating-pill short">2 SHORT</span>
+      </div>
+    </div>
+
+    <!-- Commodities -->
+    <div class="sector-card up">
+      <div class="card-header">
+        <span class="sector-name">Commodities</span>
+        <span class="sector-count">9 stocks</span>
+      </div>
+      <div class="sector-change up">+0.45%</div>
+      <div class="sparkline-container">
+        <svg class="sparkline" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00d4aa" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#00d4aa" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,30 L20,28 L40,32 L60,25 L80,27 L100,22 L120,28 L140,24 L160,20 L180,22 L200,18" fill="none" stroke="#00d4aa" stroke-width="2"/>
+          <path d="M0,30 L20,28 L40,32 L60,25 L80,27 L100,22 L120,28 L140,24 L160,20 L180,22 L200,18 L200,50 L0,50Z" fill="url(#g3)"/>
+        </svg>
+      </div>
+      <div class="rating-row">
+        <span class="rating-pill buy">3 BUY</span>
+        <span class="rating-pill hold">4 HOLD</span>
+        <span class="rating-pill sell">2 SELL</span>
+      </div>
+    </div>
+
+    <!-- Crypto -->
+    <div class="sector-card up">
+      <div class="card-header">
+        <span class="sector-name">Crypto & Finance</span>
+        <span class="sector-count">6 stocks</span>
+      </div>
+      <div class="sector-change up">+4.12%</div>
+      <div class="sparkline-container">
+        <svg class="sparkline" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g4" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00d4aa" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#00d4aa" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,42 L20,38 L40,35 L60,30 L80,25 L100,28 L120,15 L140,18 L160,10 L180,8 L200,5" fill="none" stroke="#00d4aa" stroke-width="2"/>
+          <path d="M0,42 L20,38 L40,35 L60,30 L80,25 L100,28 L120,15 L140,18 L160,10 L180,8 L200,5 L200,50 L0,50Z" fill="url(#g4)"/>
+        </svg>
+      </div>
+      <div class="rating-row">
+        <span class="rating-pill buy">3 BUY</span>
+        <span class="rating-pill hold">2 HOLD</span>
+        <span class="rating-pill short">1 SHORT</span>
+      </div>
+    </div>
+
+    <!-- AI/Semi -->
+    <div class="sector-card up">
+      <div class="card-header">
+        <span class="sector-name">AI Tech / Networking / Semis</span>
+        <span class="sector-count">14 stocks</span>
+      </div>
+      <div class="sector-change up">+1.67%</div>
+      <div class="sparkline-container">
+        <svg class="sparkline" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g5" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#00d4aa" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#00d4aa" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,32 L20,30 L40,28 L60,32 L80,25 L100,20 L120,22 L140,18 L160,15 L180,17 L200,12" fill="none" stroke="#00d4aa" stroke-width="2"/>
+          <path d="M0,32 L20,30 L40,28 L60,32 L80,25 L100,20 L120,22 L140,18 L160,15 L180,17 L200,12 L200,50 L0,50Z" fill="url(#g5)"/>
+        </svg>
+      </div>
+      <div class="rating-row">
+        <span class="rating-pill buy">7 BUY</span>
+        <span class="rating-pill hold">5 HOLD</span>
+        <span class="rating-pill sell">2 SELL</span>
+      </div>
+    </div>
+
+    <!-- Broad ETFs -->
+    <div class="sector-card down">
+      <div class="card-header">
+        <span class="sector-name">Broad Market ETFs</span>
+        <span class="sector-count">3 ETFs</span>
+      </div>
+      <div class="sector-change down">-0.23%</div>
+      <div class="sparkline-container">
+        <svg class="sparkline" viewBox="0 0 200 50" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="g6" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ff4d6a" stop-opacity="0.3"/>
+              <stop offset="100%" stop-color="#ff4d6a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0,20 L20,22 L40,18 L60,24 L80,22 L100,26 L120,24 L140,28 L160,25 L180,30 L200,28" fill="none" stroke="#ff4d6a" stroke-width="2"/>
+          <path d="M0,20 L20,22 L40,18 L60,24 L80,22 L100,26 L120,24 L140,28 L160,25 L180,30 L200,28 L200,50 L0,50Z" fill="url(#g6)"/>
+        </svg>
+      </div>
+      <div class="rating-row">
+        <span class="rating-pill buy">1 BUY</span>
+        <span class="rating-pill hold">2 HOLD</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- News -->
+  <div class="news-section">
+    <div class="section-label">Latest News</div>
+    <div class="news-list">
+      <div class="news-item">
+        <div class="news-content">
+          <div class="news-dot" style="background: var(--blue)"></div>
+          <span class="news-headline">Raytheon wins $2.1B U.S. Army missile defense contract, shares surge 3.1%</span>
+        </div>
+        <div class="news-meta">
+          <span class="news-sector-tag tag-defense">DEFENSE</span>
+          <span class="news-time">2h ago</span>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-content">
+          <div class="news-dot" style="background: var(--purple)"></div>
+          <span class="news-headline">Bitcoin surges past $95,000 on renewed institutional ETF inflows</span>
+        </div>
+        <div class="news-meta">
+          <span class="news-sector-tag tag-crypto">CRYPTO</span>
+          <span class="news-time">3h ago</span>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-content">
+          <div class="news-dot" style="background: var(--cyan)"></div>
+          <span class="news-headline">NVIDIA Q4 earnings beat expectations by 12%, data center revenue up 40% YoY</span>
+        </div>
+        <div class="news-meta">
+          <span class="news-sector-tag tag-ai">AI/SEMI</span>
+          <span class="news-time">4h ago</span>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-content">
+          <div class="news-dot" style="background: var(--amber)"></div>
+          <span class="news-headline">ExxonMobil announces $10B expansion of Gulf Coast LNG export facility</span>
+        </div>
+        <div class="news-meta">
+          <span class="news-sector-tag tag-energy">ENERGY</span>
+          <span class="news-time">5h ago</span>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-content">
+          <div class="news-dot" style="background: var(--green)"></div>
+          <span class="news-headline">Gold prices hit new all-time high as central banks continue accumulating reserves</span>
+        </div>
+        <div class="news-meta">
+          <span class="news-sector-tag tag-commodities">COMMODITIES</span>
+          <span class="news-time">6h ago</span>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-content">
+          <div class="news-dot" style="background: var(--blue)"></div>
+          <span class="news-headline">AeroVironment awarded $180M contract for Switchblade drone systems</span>
+        </div>
+        <div class="news-meta">
+          <span class="news-sector-tag tag-defense">DEFENSE</span>
+          <span class="news-time">7h ago</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="layout-label">Layout A: Command Center</div>
+
+</body>
+</html>
