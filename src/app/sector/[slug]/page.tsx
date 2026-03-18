@@ -9,6 +9,7 @@ import { NewsFeed } from '@/components/news-feed'
 import type { NewsArticle } from '@/components/news-item'
 
 export const revalidate = 300
+export const dynamicParams = true
 
 // Seeded random
 function seededRandom(seed: string): () => number {

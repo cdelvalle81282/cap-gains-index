@@ -4,6 +4,8 @@ import { SectorCard } from '@/components/sector-card'
 import { NewsFeed } from '@/components/news-feed'
 import type { NewsArticle } from '@/components/news-item'
 
+export const revalidate = 300
+
 // Seeded random number generator for deterministic mock data per sector
 function seededRandom(seed: string): () => number {
   let hash = 0
