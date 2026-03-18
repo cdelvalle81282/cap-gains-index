@@ -48,6 +48,7 @@
 }
 
 :root {
+  /* shadcn/ui variables */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -80,9 +81,31 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Dashboard theme variables - light theme (root default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8f9fa;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f1f3f5;
+  --dash-border: #e2e4e9;
+  --dash-border-hover: #d0d3da;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+
+  /* Accent colors (shared across themes) */
+  --green: #00d4aa;
+  --green-dim: rgba(0, 212, 170, 0.12);
+  --red: #ff4d6a;
+  --red-dim: rgba(255, 77, 106, 0.12);
+  --blue: #4d7cff;
+  --purple: #a855f7;
+  --amber: #f59e0b;
+  --cyan: #06b6d4;
 }
 
 .dark {
+  /* shadcn/ui variables */
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
@@ -114,6 +137,17 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
+
+  /* Dashboard theme variables - dark theme */
+  --bg-primary: #0a0b0f;
+  --bg-secondary: #12131a;
+  --bg-card: #161822;
+  --bg-card-hover: #1c1e2e;
+  --dash-border: #1e2035;
+  --dash-border-hover: #2a2d4a;
+  --text-primary: #e8e9f0;
+  --text-secondary: #8b8da3;
+  --text-muted: #5a5c72;
 }
 
 @layer base {
