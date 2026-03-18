@@ -1,0 +1,63 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Sector {
+  id          String  @id @default(cuid())
+  name        String
+  slug        String  @unique
+  description String?
+  color       String
+  stocks      Stock[]
+}
+
+model Stock {
+  id             String    @id @default(cuid())
+  ticker         String    @unique
+  name           String
+  sectorId       String
+  sector         Sector    @relation(fields: [sectorId], references: [id])
+  manualRating   String    @default("hold")
+  notes          String?
+  lastReviewedAt DateTime?
+}
+
+model SignalConfig {
+  id         String           @id @default(cuid())
+  name       String
+  parameters String
+  isActive   Boolean          @default(false)
+  createdAt  DateTime         @default(now())
+  backtests  BacktestResult[]
+}
+
+model BacktestResult {
+  id              String       @id @default(cuid())
+  configId        String
+  config          SignalConfig @relation(fields: [configId], references: [id])
+  period          String
+  accuracy        Float
+  returnVsBuyHold Float
+  details         String
+  createdAt       DateTime     @default(now())
+}
+
+model PriceCache {
+  id        String   @id @default(cuid())
+  ticker    String
+  date      DateTime
+  open      Float
+  high      Float
+  low       Float
+  close     Float
+  volume    Float
+  marketCap Float?
+
+  @@unique([ticker, date])
+  @@index([ticker])
+}

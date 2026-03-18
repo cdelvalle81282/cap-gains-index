@@ -32,6 +32,11 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# prisma
+*.db
+*.db-journal
 
 # vercel
 .vercel
@@ -42,3 +47,5 @@ next-env.d.ts
 
 # claude code
 .claude/settings.local.json
+
+/src/generated/prisma
