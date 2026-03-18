@@ -2,34 +2,44 @@ import { NextResponse } from 'next/server'
 import { createClient } from '@libsql/client'
 
 export async function GET() {
-  const envInfo = {
-    hasTursoUrl: !!process.env.TURSO_DATABASE_URL,
-    tursoUrlPrefix: process.env.TURSO_DATABASE_URL?.substring(0, 30) || 'NOT SET',
-    hasTursoToken: !!process.env.TURSO_AUTH_TOKEN,
-    tokenPrefix: process.env.TURSO_AUTH_TOKEN?.substring(0, 20) || 'NOT SET',
-    nodeEnv: process.env.NODE_ENV,
+  const tursoUrl = process.env.TURSO_DATABASE_URL || ''
+
+  // Test 1: Can Node.js parse the URL?
+  let urlParseResult: string
+  try {
+    const parsed = new URL(tursoUrl)
+    urlParseResult = `OK: ${parsed.protocol}//${parsed.hostname}`
+  } catch (e: unknown) {
+    urlParseResult = `FAIL: ${(e as Error).message}`
   }
 
-  // Test 1: Direct @libsql/client connection
+  // Test 2: Node version
+  const nodeVersion = process.version
+
+  // Test 3: Direct @libsql/client connection
   try {
     const client = createClient({
-      url: process.env.TURSO_DATABASE_URL!,
+      url: tursoUrl,
       authToken: process.env.TURSO_AUTH_TOKEN,
     })
     const result = await client.execute('SELECT COUNT(*) as cnt FROM Sector')
     return NextResponse.json({
-      ...envInfo,
+      nodeVersion,
+      urlParseResult,
+      tursoUrl: tursoUrl.substring(0, 40),
       directClientWorks: true,
       sectorCount: result.rows[0]?.cnt,
     })
   } catch (e: unknown) {
     const err = e as Error & { code?: string }
     return NextResponse.json({
-      ...envInfo,
+      nodeVersion,
+      urlParseResult,
+      tursoUrl: tursoUrl.substring(0, 40),
       directClientWorks: false,
-      directError: err.message,
-      directErrorCode: err.code,
-      directStack: err.stack?.substring(0, 500),
+      error: err.message,
+      code: err.code,
+      stack: err.stack?.substring(0, 600),
     }, { status: 500 })
   }
 }
