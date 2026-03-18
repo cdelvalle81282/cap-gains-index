@@ -1,51 +1,49 @@
 import { NextResponse } from 'next/server'
+import { createClient as createWebClient } from '@libsql/client/web'
+import { createClient as createNodeClient } from '@libsql/client'
+import { encodeBaseUrl, parseUri } from '@libsql/core/uri'
 
 export async function GET() {
   const tursoUrl = process.env.TURSO_DATABASE_URL || ''
   const authToken = process.env.TURSO_AUTH_TOKEN || ''
+  const results: Record<string, unknown> = { nodeVersion: process.version }
 
-  // Test 1: Direct fetch to Turso HTTP API (bypass @libsql/client entirely)
+  // Test 1: Parse the URL manually
   try {
-    const httpUrl = tursoUrl.replace('libsql://', 'https://').replace(/\/$/, '')
-    const resp = await fetch(`${httpUrl}/v2/pipeline`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${authToken}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        requests: [
-          { type: 'execute', stmt: { sql: 'SELECT COUNT(*) as cnt FROM Sector' } },
-          { type: 'close' },
-        ],
-      }),
-    })
-    const data = await resp.json()
-    if (!resp.ok) {
-      return NextResponse.json({
-        nodeVersion: process.version,
-        tursoUrl: httpUrl.substring(0, 40),
-        httpStatus: resp.status,
-        error: JSON.stringify(data),
-      }, { status: 500 })
-    }
-    // Extract count from Turso response
-    const rows = data?.results?.[0]?.response?.result?.rows
-    const count = rows?.[0]?.[0]?.value
-    return NextResponse.json({
-      nodeVersion: process.version,
-      tursoUrl: httpUrl.substring(0, 40),
-      directFetchWorks: true,
-      sectorCount: count,
-    })
+    const uri = parseUri(tursoUrl)
+    results.parsedScheme = uri.scheme
+    results.parsedHost = uri.authority?.host
+    results.parsedPath = JSON.stringify(uri.path)
+
+    // Try encodeBaseUrl manually
+    const encoded = encodeBaseUrl(uri.scheme, uri.authority!, uri.path)
+    results.encodedUrl = encoded.toString()
   } catch (e: unknown) {
-    const err = e as Error
-    return NextResponse.json({
-      nodeVersion: process.version,
-      tursoUrl: tursoUrl.substring(0, 40),
-      directFetchWorks: false,
-      error: err.message,
-      stack: err.stack?.substring(0, 500),
-    }, { status: 500 })
+    results.parseError = (e as Error).message
+    results.parseStack = (e as Error).stack?.substring(0, 300)
   }
+
+  // Test 2: Web client
+  try {
+    const client = createWebClient({ url: tursoUrl, authToken })
+    const r = await client.execute('SELECT COUNT(*) as cnt FROM Sector')
+    results.webClientWorks = true
+    results.webCount = r.rows[0]?.cnt
+  } catch (e: unknown) {
+    results.webClientWorks = false
+    results.webError = (e as Error).message
+  }
+
+  // Test 3: Node client
+  try {
+    const client = createNodeClient({ url: tursoUrl, authToken })
+    const r = await client.execute('SELECT COUNT(*) as cnt FROM Sector')
+    results.nodeClientWorks = true
+    results.nodeCount = r.rows[0]?.cnt
+  } catch (e: unknown) {
+    results.nodeClientWorks = false
+    results.nodeError = (e as Error).message
+  }
+
+  return NextResponse.json(results, { status: results.webClientWorks || results.nodeClientWorks ? 200 : 500 })
 }
