@@ -77,8 +77,12 @@ function generateMockStockData(stocks: { ticker: string; name: string; manualRat
 }
 
 export async function generateStaticParams() {
-  const sectors = await prisma.sector.findMany({ select: { slug: true } })
-  return sectors.map((s) => ({ slug: s.slug }))
+  try {
+    const sectors = await prisma.sector.findMany({ select: { slug: true } })
+    return sectors.map((s) => ({ slug: s.slug }))
+  } catch {
+    return []
+  }
 }
 
 export default async function SectorPage({ params }: { params: Promise<{ slug: string }> }) {

@@ -105,8 +105,12 @@ function generateMockNews(ticker: string, stockName: string, sectorSlug: string,
 }
 
 export async function generateStaticParams() {
-  const stocks = await prisma.stock.findMany({ select: { ticker: true } })
-  return stocks.map((s) => ({ ticker: s.ticker }))
+  try {
+    const stocks = await prisma.stock.findMany({ select: { ticker: true } })
+    return stocks.map((s) => ({ ticker: s.ticker }))
+  } catch {
+    return []
+  }
 }
 
 export default async function StockDetailPage({ params }: { params: Promise<{ ticker: string }> }) {
